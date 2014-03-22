@@ -20,16 +20,14 @@ public class SctpClient extends Thread {
 	public static final int MESSAGE_SIZE = 10000;
 	public int msgcntr = 0;
 	ArrayList<SctpChannel> sc = new ArrayList<>();  // holding all connections with other servers
-	public static int[] send_reply_queue=new int[5];
+	public static int send_reply_to;
 	
 	
 	SctpClient(int nodeno) {
 		mynodeno = nodeno;
-		for(int i=0;i<5;i++)
-		{
-			send_reply_queue[i]=0;
-		}
 		
+			send_reply_to=0;
+			
 	}
 
 	public void run() {
@@ -83,18 +81,15 @@ public class SctpClient extends Thread {
 							// Queue is part of Vector class 
 							// Queue is updated by Validate Reply class based on conditions
 							//System.out.println("\n \n Inside loop");
-							send_reply_queue=SctpVectorClock.getSend_reply_queue();
-							
-							for(int i=0;i<5;i++)
-							{
-								if(send_reply_queue[i]!=0)
+							send_reply_to=SctpVectorClock.getSend_reply();
+														
+								if(send_reply_to!=0)
 								{
-									send_reply(send_reply_queue[i]);
-									send_reply_queue[i]=0;
+									send_reply(send_reply_to);
+									SctpVectorClock.setSend_reply(0);
 									
 								}
-								
-							}
+						
 							
 							// Check if send request flag is set and send request based on it
 							if(SctpVectorClock.isSend_request())
@@ -105,6 +100,7 @@ public class SctpClient extends Thread {
 								System.out.println("\n Undesirable : I have token and i am still sending request");	
 									
 								}
+								
 								System.out.println("\n \n Do i have Privalage:"+SctpToken.doihavetoken);
 								
 								send_request();
@@ -139,12 +135,17 @@ public class SctpClient extends Thread {
 			SctpMain.sm.setIs_msg_reply(true);
 			SctpMain.sm.setReply_nodeno(reply_nodeno);
 			
-			SctpMain.sm.setQueueTop(SctpToken.queueTOP);
-			SctpMain.sm.setTokenQueue(SctpToken.getTokenQueue());
+			SctpMain.sm.setTokenQueue(SctpToken.getTokenQ());
 			SctpMain.sm.setTokenVector(SctpToken.getTokenVector());
 			
+			SctpToken.doihavetoken=false;
+//			SctpMain.sm.setQueueTop(SctpToken.queueTOP);
+			
+			
+			
+			
 			// update the time stamp 
-			SctpMain.sm.setTimeStamp(SctpVectorClock.getTimeStamp());
+			//SctpMain.sm.setTimeStamp(SctpVectorClock.getTimeStamp());
 			
 				// Broadcast message to every node in network along with the node no so the intended
 			   // Recipient only will retrieve the reply
@@ -175,17 +176,16 @@ public class SctpClient extends Thread {
 		
 		//Set the flag of type message
 		SctpMain.sm.setIs_msg_request(true);
-		SctpMain.sm.setIs_msg_contains_token(false);
+		//SctpMain.sm.setIs_msg_contains_token(false);
 		SctpMain.sm.setIs_msg_reply(false);
 		
 		//Increment the Time stamp 
-		SctpVectorClock.incrementTimeStamp(mynodeno);
+		//SctpVectorClock.incrementTimeStamp(mynodeno);
 		
 		// update the time stamp 
-		SctpMain.sm.setTimeStamp(SctpVectorClock.getTimeStamp());
+		//SctpMain.sm.setTimeStamp(SctpVectorClock.getTimeStamp());
 	
-		
-		
+				
 			// Broadcast message to every node in network
 			for (int j = 0; j < sc.size(); j++) {
 								

@@ -39,42 +39,38 @@ public class SctpMain {
 				//Update RN with the received request
 				SctpMain.sv.setRequest_Node(newmsg.getNode_no(), newmsg.getSeq_no());
 							
+							
+				// if token is idle and queue is empty then add it to queue
+				if((SctpToken.doihavetoken)&&(!SctpToken.isLocktoken())&&(SctpToken.getTokenQ().isEmpty()))
+				{
+					SctpToken.addTokenQ(newmsg.getNode_no());
+				}
+		
 				
-				// push the object in the queue for to validate
-				SctpValidateReply.setRequest_msg_queue(newmsg);
-				
-				
-				// SctpVaalidate reply thread will pick up the message and process it
 				
 			}
 			else if(newmsg.isIs_msg_reply())
 			{
 				
 				System.out.println("\nReply received : "+SctpVectorClock.getReply_counter());
-								
+							
+				// Lock token for executing CS
+				SctpToken.setLocktoken(true);
+				
 				// you have the token so update the flag
 				SctpToken.doihavetoken=true;
+				
+				
+				System.out.println("Token Lock status: "+SctpToken.isLocktoken());
 				System.out.println("Token status: "+SctpToken.doihavetoken);
-				
+
+				System.out.println("\n token content in Main before update" +SctpToken.getTokenQ());
 				SctpToken.setTokenVector(newmsg.getTokenVector());
-				SctpToken.setTokenQueue(newmsg.getTokenQueue(),newmsg.getQueueTop());
-				
-				SctpMain.svr.copyQueuetop(newmsg.getQueueTop());
-				SctpMain.svr.adjust_counter();
-				SctpValidateReply.setRequest_msg_queue_array(newmsg.getTokenQueue());
-				
-				
-				SctpVectorClock.updateTimeStamp(newmsg.getNode_no(), newmsg.getTimeStamp());
-				
-				
-			
-				
-				System.out.println("\n Print reply msg queue");
-				for(int j=0;j<5;j++)
-				{
-					System.out.println("\t"+SctpValidateReply.request_msg_queue[j]);
-					
-				}
+				SctpToken.setTokenQ(newmsg.getTokenQueue());
+				System.out.println("\n token content in Main after update" +SctpToken.getTokenQ());
+							
+							
+
 				
 			}
 			

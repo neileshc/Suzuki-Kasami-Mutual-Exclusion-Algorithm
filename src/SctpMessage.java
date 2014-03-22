@@ -4,14 +4,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class SctpMessage implements Serializable {
 	
 	//Declare all the content and add it to appropriate functions here that you want to be a part of message
 	private String content;
 	private int[] tokenVector = new int[Configfilereader.totalnodes];
-	private SctpMessage[] tokenQueue = new SctpMessage[Configfilereader.totalnodes];
-	public  int[] TimeStamp=new int[Configfilereader.totalnodes];
+	private Queue tokenQueue = new LinkedList<Integer>();
+	//public  int[] TimeStamp=new int[Configfilereader.totalnodes];
 	
 
 
@@ -29,8 +31,8 @@ public class SctpMessage implements Serializable {
 		// Initialize Vector clock to 0
 		for (int i = 0; i < Configfilereader.totalnodes; i++) {
 			tokenVector[i] = 0;
-			tokenQueue[i] = null;
-			TimeStamp[i] = 0;
+//			tokenQueue[i] = null;
+//			TimeStamp[i] = 0;
 		}
 		content = "Initialized message";
 		is_msg_contains_token=false;
@@ -44,15 +46,15 @@ public class SctpMessage implements Serializable {
 	
 	
 
-	public int[] getTimeStamp() {
-		return TimeStamp;
-	}
-
-
-	public void setTimeStamp(int[] timeStamp) {
-		TimeStamp = timeStamp;
-	}
-	
+//	public int[] getTimeStamp() {
+//		return TimeStamp;
+//	}
+//
+//
+//	public void setTimeStamp(int[] timeStamp) {
+//		TimeStamp = timeStamp;
+//	}
+//	
 	
 	public int getReply_nodeno() {
 		return reply_nodeno;
@@ -129,25 +131,18 @@ public class SctpMessage implements Serializable {
 	}
 
 		
-	public SctpMessage[] getTokenQueue() {
+	public Queue getTokenQueue() {
 		return tokenQueue;
 	}
 
 
-	public void setTokenQueue(SctpMessage[] tokenQueue) {
+	public void setTokenQueue(Queue tokenQueue) {
 		this.tokenQueue = tokenQueue;
 	}
 
-	public int getQueueTop() {
-		return queueTop;
-	}
 
 
 
-
-	public void setQueueTop(int queueTop) {
-		this.queueTop = queueTop;
-	}
 	
 	
 	

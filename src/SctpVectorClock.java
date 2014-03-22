@@ -8,7 +8,7 @@ when we make new request update RN as well
 public class SctpVectorClock {
 
 // Time stamp for every message 
-public static int[]TimeStamp = new int[Configfilereader.totalnodes];
+//public static int[]TimeStamp = new int[Configfilereader.totalnodes];
 	
 // Mentains data about so far requests received by every node
 public static int[] Request_Node=new int[Configfilereader.totalnodes];
@@ -17,7 +17,7 @@ public static int[] Request_Node=new int[Configfilereader.totalnodes];
 public static int Reply_counter;
 
 //Queue for the send reply function to check pending replies
-public static int[] send_reply_queue=new int[5]; 
+public static int send_reply;
 
 //Flag for the send request function 
 public static boolean send_request; 
@@ -32,17 +32,14 @@ public SctpVectorClock()
 	for(int i=0;i<Configfilereader.totalnodes;i++)
 	{
 				Request_Node[i]=0;
-				TimeStamp[i]=0;
+				//TimeStamp[i]=0;
 	}
 	Reply_counter=0;
 	
 	// Un flag initial send request for all nodes
 	send_request=false;
+	send_reply=0;
 	
-	for(int i=0;i<5;i++)
-	{
-		send_reply_queue[i]=0;
-	}
 }
 
 
@@ -50,30 +47,30 @@ public SctpVectorClock()
 // BSS Time Stamp Implementation methods------------------------------------
 
 // returns current time stamp
-public static int[] getTimeStamp() {
-	return TimeStamp;
-}
-
-// increments its clock value by one on sending message
-public static void incrementTimeStamp(int node)
-{
-	TimeStamp[(node-1)]=TimeStamp[(node-1)] + 1;
-}
-
-
-// updates its time stamp based on received timestamp values.
-public static void updateTimeStamp(int receivenode,int[] receivetimeStamp) {
-	for(int i=0;i<Configfilereader.totalnodes;i++)
-	{
-		//currentvectorClock[i] = Math.max(currentvectorClock[i], receiveVector[i]);
-	    if(TimeStamp[i] >= receivetimeStamp[i])
-	    	TimeStamp[i] = receivetimeStamp[i];
-	    else
-	    	TimeStamp[i] =receivetimeStamp[i];
-	}
-	incrementTimeStamp(receivenode);
-
-}
+//public static int[] getTimeStamp() {
+//	return TimeStamp;
+//}
+//
+//// increments its clock value by one on sending message
+//public static void incrementTimeStamp(int node)
+//{
+//	TimeStamp[(node-1)]=TimeStamp[(node-1)] + 1;
+//}
+//
+//
+//// updates its time stamp based on received timestamp values.
+//public static void updateTimeStamp(int receivenode,int[] receivetimeStamp) {
+//	for(int i=0;i<Configfilereader.totalnodes;i++)
+//	{
+//		//currentvectorClock[i] = Math.max(currentvectorClock[i], receiveVector[i]);
+//	    if(TimeStamp[i] >= receivetimeStamp[i])
+//	    	TimeStamp[i] = receivetimeStamp[i];
+//	    else
+//	    	TimeStamp[i] =receivetimeStamp[i];
+//	}
+//	incrementTimeStamp(receivenode);
+//
+//}
 //--------------------------------------------------------------------------------
 
 // returns flag to broadcast request
@@ -82,30 +79,33 @@ public static boolean isSend_request() {
 }
 
 // Sets the flag to broadcast request
+// Client will pick up this flag 
 public static void setSend_request(boolean send_request) {
 	SctpVectorClock.send_request = send_request;
 }
 
 
-// returns the current pending reply list for sending replies
-public static int[] getSend_reply_queue() {
-	return send_reply_queue;
+// returns flag status
+public static int getSend_reply() {
+	return send_reply;
 }
 
 // Updates the send reply queue , Send reply function from client will use this data
-public static void setSend_reply_queue(int send_reply_queue) {
-	int i=0;
-	for(i=0;i<5;i++)
-	{
-		// Possible bug in logic - lower priority might shift to higher one
-	if(SctpVectorClock.send_reply_queue[i]==0)
-		{
-			SctpVectorClock.send_reply_queue[i] = send_reply_queue;
-			break;
-		}
-	}
-	if(i==5)
-		System.out.println("\n Error: Send Reply Queue is full : undesirable");
+public static void setSend_reply(int nodeno) {
+	send_reply=nodeno;
+	
+//	int i=0;
+//	for(i=0;i<Configfilereader.totalnodes;i++)
+//	{
+//		// Possible bug in logic - lower priority might shift to higher one
+//	if(SctpVectorClock.send_reply_queue[i]==0)
+//		{
+//			SctpVectorClock.send_reply_queue[i] = send_reply_queue;
+//			break;
+//		}
+//	}
+//	if(i==5)
+//		System.out.println("\n Error: Send Reply Queue is full : undesirable");
 	}
 
 

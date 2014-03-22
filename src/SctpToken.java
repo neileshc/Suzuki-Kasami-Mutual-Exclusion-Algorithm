@@ -1,3 +1,6 @@
+import java.util.LinkedList;
+import java.util.Queue;
+
 /*
   - Queue:
 Q - queue of requesting nodes in FIFO
@@ -15,13 +18,15 @@ Note: update RN and LN when you leave CS
 
 
 public class SctpToken {
-	public static SctpMessage[] tokenQueue=new SctpMessage[Configfilereader.totalnodes];
-	public static int[] tokenVector=new int[Configfilereader.totalnodes];
-	public static int queueTOP;
-	public static boolean isempty_tokenqueue;
+//	public static SctpMessage[] tokenQueue=new SctpMessage[Configfilereader.totalnodes];
+	//	public static int queueTOP;
+//	public static boolean isempty_tokenqueue;
 	public static boolean doihavetoken;
 	public static boolean Locktoken;
+	public static int[] tokenVector=new int[Configfilereader.totalnodes];
 
+
+	public static Queue<Integer> TokenQ=new LinkedList<Integer>();
 
 
 	public SctpToken()
@@ -29,12 +34,12 @@ public class SctpToken {
 		System.out.println("Initializing Token content to 0");
 		for(int i=0;i<Configfilereader.totalnodes;i++)
 		{
-			tokenQueue[i]=null;
+			//tokenQueue[i]=null;
 			tokenVector[i]=0;
 			
 		}
-		queueTOP =-1;
-		isempty_tokenqueue=true;
+		//queueTOP =-1;
+		//isempty_tokenqueue=true;
 		Locktoken=false;
 		
 		//start token with node no 1 initially
@@ -59,24 +64,44 @@ public class SctpToken {
 	
 	
 	
-	public static SctpMessage[] getTokenQueue() {
-		return tokenQueue;
+	
+	
+	// returns the current queue element
+	public static Queue getTokenQ() {
+		return TokenQ;
 	}
 
-	public static void setTokenQueue(SctpMessage[] tokenQueue,int receivedQuetop) {
-				
-		SctpToken.tokenQueue = tokenQueue;
-		queueTOP=receivedQuetop;
+    //sets the queue to argument content
+	public static void setTokenQ(Queue tokenQ) {
+		TokenQ = tokenQ;
 	}
+	
+	// adds new element to Queue
+	public static void addTokenQ(int nodeno)
+	{
+		TokenQ.add(nodeno);
+	}
+	
+	// removes top of queue 
+	// call this method when you are transferring token to top of queue node
+	public static void removeTokenQ()
+	{
+		TokenQ.remove();
+	}
+			
+	
+	
+	
+	
+	
 
 	public static int[] getTokenVector() {
-		
-		if(isempty_tokenqueue==false)
-		return tokenVector;
-		
 		// if the queue is empty we return null
+		if(TokenQ.isEmpty())
+			return null; 
+		
 		else
-			return null;  
+			return tokenVector;
 	}
 
 	public static void setTokenVector(int[] tokenVector) {
@@ -89,3 +114,17 @@ public class SctpToken {
 		tokenVector[(SctpServer.mynodeno-1)]=tokenVector[SctpServer.mynodeno-1] + 1;
 	}
 }
+
+
+
+
+//public static SctpMessage[] getTokenQueue() {
+//return tokenQueue;
+//}
+//
+//public static void setTokenQueue(SctpMessage[] tokenQueue,int receivedQuetop) {
+//		
+//SctpToken.tokenQueue = tokenQueue;
+//queueTOP=receivedQuetop;
+//}
+//
