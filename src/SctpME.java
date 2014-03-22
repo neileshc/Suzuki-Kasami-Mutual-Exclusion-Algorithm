@@ -23,7 +23,8 @@ public class SctpME {
 			// set reenter flag , on flag set we dont update RN and LN
 			is_reenter= true;
 				
-			System.out.println("\n Token // Privalage aquired");
+			System.out.println("\ncs_enter : Token // Privalage aquired");
+			SctpMain.LOG.logger.info("\ncs_enter : Token // Privalage aquired");
 			
 			// Lock token for executing CS
 			SctpToken.setLocktoken(true);
@@ -33,7 +34,8 @@ public class SctpME {
 			}
 			
 			// Handle the logic of passing token to some other queue and then generating request
-			System.out.println("\n Error: in SCTP ME class: had queue and generated own request");
+			System.out.println("\ncs_enter :  Error: in SCTP ME class: had queue and generated own request");
+			SctpMain.LOG.logger.info("\ncs_enter :  Error: in SCTP ME class: had queue and generated own request");
 			// execute CS in application
 		}
 		
@@ -41,21 +43,20 @@ public class SctpME {
 		// if you dont have token then request one---------------------------------------------------
 		SctpVectorClock.setSend_request(true);
 		
-		System.out.println("before ME: "+SctpToken.doihavetoken);
-			
+		System.out.println("\ncs_enter :  before ME: "+SctpToken.doihavetoken);
+		SctpMain.LOG.logger.info("\ncs_enter :  before ME: "+SctpToken.doihavetoken);
+		
 		while(true)
 		{
 			// keep waiting
 			if(SctpToken.doihavetoken== true)
 				break;
 			
-			System.out.print(".");
+			System.out.print("");
 		}
 		
-		System.out.println("Token status in ME: "+SctpToken.doihavetoken);
-		
-		// Token lock is done in main as we have to lock it as soon as we receive token so to prevent 
-		// validate reply from transferring token
+		System.out.println("\ncs_enter :  Token status in ME: "+SctpToken.doihavetoken);
+		SctpMain.LOG.logger.info("\ncs_enter :  Token status in ME: "+SctpToken.doihavetoken);
 		
 		//Return true on successful lock
 		return true;
@@ -67,14 +68,19 @@ public class SctpME {
 	
 	public synchronized boolean cs_leave()
 	{
-		//System.out.println("****content:"+SctpToken.tokenVector.length);//+ SctpToken.tokenVector[(SctpServer.mynodeno-1)]);
-      
+		
 		
 		if(is_reenter==false)
 			
 		{
 
 		SctpToken.incrementTokenVector();
+		}
+		
+		else if(is_reenter==true)
+		{
+			// reset the re_enter flag
+			is_reenter=false;
 		}
 			
 		
@@ -89,17 +95,24 @@ public class SctpME {
 			
 			SctpToken.addTokenQ(i+1);
 			
-			System.out.println("\n Updated the Token Que and LN");
-			System.out.println("\n Lock Token : "+SctpToken.isLocktoken());
-			
-			System.out.println("\n token content" +SctpToken.getTokenQ());
+			System.out.println("\nCS_Leave : Updated the Token Que and LN");
+			SctpMain.LOG.logger.info("\nCS_Leave : Updated the Token Que and LN");
+			System.out.println("\nCS_Leave :  Lock Token : "+SctpToken.isLocktoken());
+			SctpMain.LOG.logger.info("\nCS_Leave :  Lock Token : "+SctpToken.isLocktoken());
+			System.out.println("\nCS_Leave :  token content" +SctpToken.getTokenQ());
+			SctpMain.LOG.logger.info("\nCS_Leave :  token content" +SctpToken.getTokenQ());
 		}
 		
 		
 		//unlock the token
 		SctpToken.setLocktoken(false);
-		System.out.println("\n unlocking token . token locked?: "+SctpToken.isLocktoken());
-			
+		System.out.println("\nCS_Leave : unlocking token . token locked?: "+SctpToken.isLocktoken());
+		SctpMain.LOG.logger.info("\nCS_Leave : unlocking token . token locked?: "+SctpToken.isLocktoken());
+		if(!(SctpToken.getTokenQ().isEmpty()))
+		{
+				SctpValidateReply.ValidateReply();
+		}
+		
 		// return true on successfully leaving CS
 		return true;
 	}
