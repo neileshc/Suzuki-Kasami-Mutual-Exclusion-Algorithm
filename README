@@ -1,0 +1,14 @@
+
+
+Implementation of Suzuki Kasami Mutual Exclusion Algorithm
+
+This is Token based Muual Exclusion algorithm.
+Implemented as part of Course work Advanced Operating Systems in The University of Texas at Dallas in Spring 2014
+Under the prof Neeraj Mittal.
+
+Project is entirely designed in the Java
+SCTP protocol is used for socket programming
+heavy multi threading is used while implementation.
+
+For any more questions or details contact author @ 
+Neilesh Chorakhalikar : cns.nilesh@gmail.com
