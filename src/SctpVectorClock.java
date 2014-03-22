@@ -80,7 +80,7 @@ public static boolean isSend_request() {
 
 // Sets the flag to broadcast request
 // Client will pick up this flag 
-public static void setSend_request(boolean send_request) {
+public synchronized static void setSend_request(boolean send_request) {
 	SctpVectorClock.send_request = send_request;
 }
 
@@ -91,21 +91,9 @@ public static int getSend_reply() {
 }
 
 // Updates the send reply queue , Send reply function from client will use this data
-public static void setSend_reply(int nodeno) {
+public synchronized static void setSend_reply(int nodeno) {
 	send_reply=nodeno;
-	
-//	int i=0;
-//	for(i=0;i<Configfilereader.totalnodes;i++)
-//	{
-//		// Possible bug in logic - lower priority might shift to higher one
-//	if(SctpVectorClock.send_reply_queue[i]==0)
-//		{
-//			SctpVectorClock.send_reply_queue[i] = send_reply_queue;
-//			break;
-//		}
-//	}
-//	if(i==5)
-//		System.out.println("\n Error: Send Reply Queue is full : undesirable");
+
 	}
 
 
@@ -116,7 +104,7 @@ public static int getReply_counter() {
 }
 
 // we increment reply counter here so always receiev 1 as arg
-public static void setReply_counter(int reply_counter) {
+public synchronized static void setReply_counter(int reply_counter) {
 	Reply_counter = Reply_counter+reply_counter;
 }
 
@@ -125,7 +113,7 @@ public static void setReply_counter(int reply_counter) {
 
 
 //call this method when you generate own request
-public void incrementRequest_node()
+public synchronized void incrementRequest_node()
 {
 	Request_Node[(SctpServer.mynodeno-1)]=Request_Node[(SctpServer.mynodeno-1)] + 1;
 }
@@ -144,7 +132,7 @@ public static int get_my_seq_no(int node_no)
 }
 
 //set the particular node with the incoming sequence no
-public void setRequest_Node(int node_no,int seq_no) {
+public synchronized void setRequest_Node(int node_no,int seq_no) {
 
 	if(Request_Node[node_no-1] >= seq_no)
     	Request_Node[node_no-1] = Request_Node[node_no-1];

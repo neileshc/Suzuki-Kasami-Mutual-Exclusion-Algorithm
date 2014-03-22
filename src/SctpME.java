@@ -11,7 +11,7 @@ public class SctpME {
 	// Application will make call here to request for critical section
 	// On success returns true 
 	// till then reply differed
-	public boolean cs_enter()
+	public synchronized boolean cs_enter()
 	{
 		
 		//Check if you have token before sending request
@@ -27,13 +27,7 @@ public class SctpME {
 			
 			// Lock token for executing CS
 			SctpToken.setLocktoken(true);
-			
-			// update RN
-			//SctpMain.sv.incrementRequest_node();   --- dont update RN if u have token and u r rentering
-			
-			//update Timestamp
-			//SctpVectorClock.incrementTimeStamp(SctpServer.mynodeno);  -- we dont need time stamps
-						
+									
 			//Return true on successful lock
 			return true;
 			}
@@ -47,17 +41,16 @@ public class SctpME {
 		// if you dont have token then request one---------------------------------------------------
 		SctpVectorClock.setSend_request(true);
 		
-		// the flags and node request updates are taken care in send request method
-		int counter =0;
-		do
+		System.out.println("before ME: "+SctpToken.doihavetoken);
+			
+		while(true)
 		{
-			// wait till you get token
+			// keep waiting
+			if(SctpToken.doihavetoken== true)
+				break;
 			
-			// find clever way to keep this alive
-			// this is not working correctly, this condition should trigger false before validate could kick in
-			counter++;
-			
-		}while(SctpToken.doihavetoken== false);
+			System.out.print(".");
+		}
 		
 		System.out.println("Token status in ME: "+SctpToken.doihavetoken);
 		
@@ -72,11 +65,15 @@ public class SctpME {
 	}
 
 	
-	public boolean cs_leave()
+	public synchronized boolean cs_leave()
 	{
+		//System.out.println("****content:"+SctpToken.tokenVector.length);//+ SctpToken.tokenVector[(SctpServer.mynodeno-1)]);
+      
+		
 		if(is_reenter==false)
+			
 		{
-		// update the LN
+
 		SctpToken.incrementTokenVector();
 		}
 			
@@ -85,6 +82,9 @@ public class SctpME {
 		for(int i=0;i<Configfilereader.totalnodes;i++)
 		{
 			if(SctpVectorClock.Request_Node[i]==SctpToken.tokenVector[i])
+				continue;
+			
+			if(SctpToken.getTokenQ().contains(i+1))
 				continue;
 			
 			SctpToken.addTokenQ(i+1);

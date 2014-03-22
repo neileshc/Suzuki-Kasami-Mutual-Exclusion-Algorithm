@@ -46,31 +46,33 @@ public class SctpMain {
 					SctpToken.addTokenQ(newmsg.getNode_no());
 				}
 		
+				// else we dont have action pending
+				// if you have token then its in CS or if not you have queue waiting
+				//to which you will transfer control
 				
 				
 			}
 			else if(newmsg.isIs_msg_reply())
 			{
 				
-				System.out.println("\nReply received : "+SctpVectorClock.getReply_counter());
+				System.out.println("\n Process Data :Reply received");
 							
 				// Lock token for executing CS
+				// Validate reply: sending token will be prevented until lock is removed
 				SctpToken.setLocktoken(true);
-				
-				// you have the token so update the flag
-				SctpToken.doihavetoken=true;
-				
-				
-				System.out.println("Token Lock status: "+SctpToken.isLocktoken());
-				System.out.println("Token status: "+SctpToken.doihavetoken);
-
-				System.out.println("\n token content in Main before update" +SctpToken.getTokenQ());
+							
+				System.out.println("\n Process Data : q content before update" +SctpToken.getTokenQ());
 				SctpToken.setTokenVector(newmsg.getTokenVector());
 				SctpToken.setTokenQ(newmsg.getTokenQueue());
-				System.out.println("\n token content in Main after update" +SctpToken.getTokenQ());
+				System.out.println("\n Process Data : q content after update" +SctpToken.getTokenQ());
+			
+				
+				// you have the token so update the flag
+				// ME: the condition will be true and thread will be unblocked
+				SctpToken.doihavetoken=true;
 							
-							
-
+				System.out.println("\n Process Data :Token Lock status: "+SctpToken.isLocktoken());
+				System.out.println("\n Process Data :Token status: "+SctpToken.doihavetoken);
 				
 			}
 			

@@ -67,24 +67,24 @@ public class SctpToken {
 	
 	
 	// returns the current queue element
-	public static Queue getTokenQ() {
+	public synchronized static Queue getTokenQ() {
 		return TokenQ;
 	}
 
     //sets the queue to argument content
-	public static void setTokenQ(Queue tokenQ) {
+	public synchronized static void setTokenQ(Queue tokenQ) {
 		TokenQ = tokenQ;
 	}
 	
 	// adds new element to Queue
-	public static void addTokenQ(int nodeno)
+	public synchronized static void addTokenQ(int nodeno)
 	{
 		TokenQ.add(nodeno);
 	}
 	
 	// removes top of queue 
 	// call this method when you are transferring token to top of queue node
-	public static void removeTokenQ()
+	public synchronized static void removeTokenQ()
 	{
 		TokenQ.remove();
 	}
@@ -97,34 +97,25 @@ public class SctpToken {
 
 	public static int[] getTokenVector() {
 		// if the queue is empty we return null
-		if(TokenQ.isEmpty())
-			return null; 
-		
-		else
+//		if(TokenQ.isEmpty())
+//			return null; 
+//		
+//		else
 			return tokenVector;
 	}
 
-	public static void setTokenVector(int[] tokenVector) {
+	public synchronized static void setTokenVector(int[] tokenVector) {
 		SctpToken.tokenVector = tokenVector;
 	}
 	
 	// after CS execution always call increment to update the token vector.
-	public static void incrementTokenVector()
+	public synchronized static void incrementTokenVector()
 	{
-		tokenVector[(SctpServer.mynodeno-1)]=tokenVector[SctpServer.mynodeno-1] + 1;
+		//System.out.println("content:"+ SctpToken.tokenVector[(SctpServer.mynodeno-1)]);
+		SctpToken.tokenVector[(SctpServer.mynodeno-1)]=SctpToken.tokenVector[SctpServer.mynodeno-1] + 1;
+		//System.out.println("content:"+ SctpToken.tokenVector[(SctpServer.mynodeno-1)]);
 	}
 }
 
 
 
-
-//public static SctpMessage[] getTokenQueue() {
-//return tokenQueue;
-//}
-//
-//public static void setTokenQueue(SctpMessage[] tokenQueue,int receivedQuetop) {
-//		
-//SctpToken.tokenQueue = tokenQueue;
-//queueTOP=receivedQuetop;
-//}
-//
