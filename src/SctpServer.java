@@ -13,8 +13,8 @@ public class SctpServer extends Thread {
 	public static final int MESSAGE_SIZE = 10000;
 	public int msgsent = 0;
 	public int[] servervectorclock = new int[Configfilereader.totalnodes];
+//	public static SctpChannel[] sc = new SctpChannel[Configfilereader.totalnodes] ;
 	public static ArrayList<SctpChannel> sc = new ArrayList<>();
-
 	
 	// Initialize server details
 	public SctpServer(int nodeno) {
@@ -43,9 +43,19 @@ public class SctpServer extends Thread {
 					+ " at Port number: " + SERVER_PORT);
 
 			// Server runs in loop for accepting connections from clients
+			// as soon as it gets connection it creates seperate thread for that one
+			
+			SctpChannel sc_temp;
 			do {
 				// Returns a new SCTPChannel between the server and client
-				sc.add(ssc.accept());
+				
+					sc_temp=(ssc.accept());
+				//sc_temp.getRemoteAddresses();
+					sc.add(sc_temp);
+				//sc.add(ssc.accept());
+				SctpChannelprocessing thread=new SctpChannelprocessing(sc_temp);
+				Thread obj = new Thread(thread);		
+				obj.start();
 				
 				System.out.println("connection accepted from another node");
 
@@ -58,82 +68,28 @@ public class SctpServer extends Thread {
 			// Allow some time to server to accept connections
 			System.out
 			.println("Node Setup Completed , Preparing network to send messages.....");
-			this.sleep(3000);
-			
-			
-			
-//-----------------------------------------------------------------------------------------------
-			
-		for(int i=0;i<5;i++)
-		{
-			send_request();
-			//System.out.println("Sent :"+ i);
-		}
-		//this.sleep(3000);
 		
-		
-		
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	//broadcasts request for critical section
-	public void send_request()
-	{
-		// Increment the sequence no for new cs request
-		SctpMain.sv.incrementVectorClock(mynodeno);
-		SctpMain.sm.setSeq_no(SctpVectorClock.get_my_seq_no(mynodeno));
-		SctpMain.sm.setIs_msg_contains_token(false);
-		SctpMain.sm.setIs_msg_request(true);
-		
-			for (int j = 0; j < sc.size(); j++) {
-				// call for send message method
+			
+			do
+			{
+				//do thing
 				
-				SendMsg(sc.get(j));
-				}
-	}
-	
-	
-	public void SendMsg(SctpChannel sc) {
-		// Buffer to hold messages in byte format
-		ByteBuffer buf = ByteBuffer.allocate(MESSAGE_SIZE);
-		try {
+			}while(true);
 			
-				SctpMain.sm.setContent("\n Hello from Machine : "+Configfilereader.Machinename[(mynodeno - 1)] +"(Port : "
-						+ SERVER_PORT );
-
+			// handle it better way to avoid server shutting down if you can
 			
-			// Before sending messages add additional information about the
-			// message
-			MessageInfo messageInfo = MessageInfo.createOutgoing(null, 0);
-
-			buf.clear();
-
-			// convert the string message into bytes and put it in the byte
-			// buffer
-			buf.put(SctpMessage.serialize(SctpMain.sm));
-
-			// Reset a pointer to point to the start of buffer
-			buf.flip();
-
-			// Send a message in the channel (byte format)
-			sc.send(buf, messageInfo);
 			
-			// System.out.println("Server" + newmsg.getContent());
+			
 
-			buf.clear();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-
+		} //catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		//}
 	}
 
+	
 }

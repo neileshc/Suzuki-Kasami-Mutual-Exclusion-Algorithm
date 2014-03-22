@@ -15,32 +15,58 @@ Note: update RN and LN when you leave CS
 
 
 public class SctpToken {
-	public static int[] tokenQueue=new int[Configfilereader.totalnodes];
+	public static SctpMessage[] tokenQueue=new SctpMessage[Configfilereader.totalnodes];
 	public static int[] tokenVector=new int[Configfilereader.totalnodes];
 	public static int queueTOP;
 	public static boolean isempty_tokenqueue;
-	
+	public static boolean doihavetoken;
+	public static boolean Locktoken;
+
+
+
 	public SctpToken()
 	{
 		System.out.println("Initializing Token content to 0");
 		for(int i=0;i<Configfilereader.totalnodes;i++)
 		{
-			tokenQueue[i]=0;
+			tokenQueue[i]=null;
 			tokenVector[i]=0;
 			
 		}
 		queueTOP =-1;
 		isempty_tokenqueue=true;
+		Locktoken=false;
+		
+		//start token with node no 1 initially
+		if(SctpServer.mynodeno==1)
+			doihavetoken=true;
+		else
+			doihavetoken= false;
+			
 	}
 	
 	
+	// before transferring token check if it is locked
+	public static boolean isLocktoken() {
+		return Locktoken;
+	}
+
+	//Lock token before entering CS so that no changes will be made
+	public static void setLocktoken(boolean locktoken) {
+		Locktoken = locktoken;
+	}
+
 	
-	public static int[] getTokenQueue() {
+	
+	
+	public static SctpMessage[] getTokenQueue() {
 		return tokenQueue;
 	}
 
-	public static void setTokenQueue(int[] tokenQueue) {
+	public static void setTokenQueue(SctpMessage[] tokenQueue,int receivedQuetop) {
+				
 		SctpToken.tokenQueue = tokenQueue;
+		queueTOP=receivedQuetop;
 	}
 
 	public static int[] getTokenVector() {
@@ -57,4 +83,9 @@ public class SctpToken {
 		SctpToken.tokenVector = tokenVector;
 	}
 	
+	// after CS execution always call increment to update the token vector.
+	public static void incrementTokenVector()
+	{
+		tokenVector[(SctpServer.mynodeno-1)]=tokenVector[SctpServer.mynodeno-1] + 1;
+	}
 }

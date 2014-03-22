@@ -10,12 +10,68 @@ public class SctpMessage implements Serializable {
 	//Declare all the content and add it to appropriate functions here that you want to be a part of message
 	private String content;
 	private int[] tokenVector = new int[Configfilereader.totalnodes];
-	private int[] tokenQueue = new int[Configfilereader.totalnodes];
+	private SctpMessage[] tokenQueue = new SctpMessage[Configfilereader.totalnodes];
+	public  int[] TimeStamp=new int[Configfilereader.totalnodes];
+	
+
+
 	private boolean is_msg_contains_token;
 	private boolean is_msg_request;
+	private boolean is_msg_reply;
 	private int node_no;
 	private int seq_no;
+	private int reply_nodeno;
+	private int queueTop;
 	
+	
+	public SctpMessage(int nodeno) {
+		
+		// Initialize Vector clock to 0
+		for (int i = 0; i < Configfilereader.totalnodes; i++) {
+			tokenVector[i] = 0;
+			tokenQueue[i] = null;
+			TimeStamp[i] = 0;
+		}
+		content = "Initialized message";
+		is_msg_contains_token=false;
+		node_no=nodeno;
+		seq_no=SctpVectorClock.get_my_seq_no(node_no);
+		is_msg_request=false;
+		is_msg_reply=false;
+		reply_nodeno=-1;
+	}
+
+	
+	
+
+	public int[] getTimeStamp() {
+		return TimeStamp;
+	}
+
+
+	public void setTimeStamp(int[] timeStamp) {
+		TimeStamp = timeStamp;
+	}
+	
+	
+	public int getReply_nodeno() {
+		return reply_nodeno;
+	}
+
+
+	public void setReply_nodeno(int reply_nodeno) {
+		this.reply_nodeno = reply_nodeno;
+	}
+
+
+	public boolean isIs_msg_reply() {
+		return is_msg_reply;
+	}
+
+	public void setIs_msg_reply(boolean is_msg_reply) {
+		this.is_msg_reply = is_msg_reply;
+	}
+
 	public void setSeq_no(int seq_no) {
 		this.seq_no = seq_no;
 	}
@@ -28,24 +84,9 @@ public class SctpMessage implements Serializable {
 		return node_no;
 	}
 
-	
-	
-	
+		
 
 
-	public SctpMessage(int nodeno) {
-				
-		// Initialize Vector clock to 0
-		for (int i = 0; i < Configfilereader.totalnodes; i++) {
-			tokenVector[i] = 0;
-			tokenQueue[i] = 0;
-		}
-		content = "Initialized message";
-		is_msg_contains_token=false;
-		node_no=nodeno;
-		seq_no=SctpVectorClock.get_my_seq_no(node_no);
-		is_msg_request=false;
-	}
 
 	
 	
@@ -88,16 +129,25 @@ public class SctpMessage implements Serializable {
 	}
 
 		
-	public int[] getTokenQueue() {
+	public SctpMessage[] getTokenQueue() {
 		return tokenQueue;
 	}
 
 
-	public void setTokenQueue(int[] tokenQueue) {
+	public void setTokenQueue(SctpMessage[] tokenQueue) {
 		this.tokenQueue = tokenQueue;
 	}
 
-	
+	public int getQueueTop() {
+		return queueTop;
+	}
+
+
+
+
+	public void setQueueTop(int queueTop) {
+		this.queueTop = queueTop;
+	}
 	
 	
 	

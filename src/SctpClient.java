@@ -20,9 +20,16 @@ public class SctpClient extends Thread {
 	public static final int MESSAGE_SIZE = 10000;
 	public int msgcntr = 0;
 	ArrayList<SctpChannel> sc = new ArrayList<>();  // holding all connections with other servers
+	public static int[] send_reply_queue=new int[5];
+	
 	
 	SctpClient(int nodeno) {
 		mynodeno = nodeno;
+		for(int i=0;i<5;i++)
+		{
+			send_reply_queue[i]=0;
+		}
+		
 	}
 
 	public void run() {
@@ -69,26 +76,50 @@ public class SctpClient extends Thread {
 					
 			
 			
-// code for revceiving message
-			do {
-				for (int i = 0; i < sc.size(); i++) {
-					sc.get(i).configureBlocking(false); 
-													
-					newmsg = receiveMsg(sc.get(i));
 
-					if (newmsg != null) {
-						System.out.println("\n---------------------------------");
-						System.out.println(newmsg.getContent());
-						msgcntr++;
-					}
-				}
-			} while (msgcntr < 5*(Configfilereader.totalnodes - 1));
-			
-			
+						
+						do{
+							// This checks the queue if any reply needs to send
+							// Queue is part of Vector class 
+							// Queue is updated by Validate Reply class based on conditions
+							//System.out.println("\n \n Inside loop");
+							send_reply_queue=SctpVectorClock.getSend_reply_queue();
+							
+							for(int i=0;i<5;i++)
+							{
+								if(send_reply_queue[i]!=0)
+								{
+									send_reply(send_reply_queue[i]);
+									send_reply_queue[i]=0;
+									
+								}
+								
+							}
+							
+							// Check if send request flag is set and send request based on it
+							if(SctpVectorClock.isSend_request())
+							{
+								// Crosscheck if you have token then you should not be making req
+								if(SctpToken.doihavetoken==true)
+								{
+								System.out.println("\n Undesirable : I have token and i am still sending request");	
+									
+								}
+								System.out.println("\n \n Do i have Privalage:"+SctpToken.doihavetoken);
+								
+								send_request();
+								
+								// Unset the request flag after sending message.
+								SctpVectorClock.setSend_request(false);
+								
+								
+							}
+							
+							
+							
+						}while(true);
+						
 		
-			
-		
-
 		}
 
 		catch (IOException | InterruptedException e) {
@@ -97,42 +128,110 @@ public class SctpClient extends Thread {
 		}
 	}
 
-	SctpMessage receiveMsg(SctpChannel sc) {
-		SctpMessage newmsg = null;
-		ByteBuffer buf = ByteBuffer.allocate(MESSAGE_SIZE);
-		int msgid = 0;
-		int[] receivedvectorClock = new int[Configfilereader.totalnodes];
-		
-		try {
-			MessageInfo messageInfo = null;
-			messageInfo = sc.receive(buf, System.out, null);
-
-			// Converting bytes to string.
-			if (messageInfo != null) {
-				newmsg = (SctpMessage) SctpMessage.deserialize(buf.array());
-
-				if (newmsg != null) {
-					
-					// determine if the message type is of request and take action accordingly
-					if(newmsg.isIs_msg_request())
-					{
-						System.out.println("\n New request for critical section received from node: "+ newmsg.getNode_no());
-						System.out.println("\n Sequence no: "+newmsg.getSeq_no());
-						SctpMain.sv.setRequest_Node(newmsg.getNode_no(), newmsg.getSeq_no());
-						
-					}
+	// Message of type request
 	
+			
+		public void send_reply(int reply_nodeno)
+		{
+						
+			//Set the flag of type message
+			SctpMain.sm.setIs_msg_request(false);
+			SctpMain.sm.setIs_msg_reply(true);
+			SctpMain.sm.setReply_nodeno(reply_nodeno);
+			
+			SctpMain.sm.setQueueTop(SctpToken.queueTOP);
+			SctpMain.sm.setTokenQueue(SctpToken.getTokenQueue());
+			SctpMain.sm.setTokenVector(SctpToken.getTokenVector());
+			
+			// update the time stamp 
+			SctpMain.sm.setTimeStamp(SctpVectorClock.getTimeStamp());
+			
+				// Broadcast message to every node in network along with the node no so the intended
+			   // Recipient only will retrieve the reply
+				for (int j = 0; j < sc.size(); j++) {
+										
+					SendMsg(sc.get(j));
 					
+									}
+				System.out.println("\n Reply sent to request");
+				
+		}	
+	
+	
+	
+	// Message of type request
+	public void send_request()
+	{
+		System.out.println("\n Request Sent");
+		
+		// Increment the sequence no for new cs request
+		SctpMain.sv.incrementRequest_node();
+		
+		// Set seq no in message object to send
+		SctpMain.sm.setSeq_no(SctpVectorClock.get_my_seq_no(mynodeno));
+		
+		// set Reply node no as your node no
+		SctpMain.sm.setReply_nodeno(mynodeno);
+		
+		//Set the flag of type message
+		SctpMain.sm.setIs_msg_request(true);
+		SctpMain.sm.setIs_msg_contains_token(false);
+		SctpMain.sm.setIs_msg_reply(false);
+		
+		//Increment the Time stamp 
+		SctpVectorClock.incrementTimeStamp(mynodeno);
+		
+		// update the time stamp 
+		SctpMain.sm.setTimeStamp(SctpVectorClock.getTimeStamp());
+	
+		
+		
+			// Broadcast message to every node in network
+			for (int j = 0; j < sc.size(); j++) {
+								
+				SendMsg(sc.get(j));
 				}
-			}
+				
+			
+			
+	}
+	
+	
+	public void SendMsg(SctpChannel sc) {
+		// Buffer to hold messages in byte format
+		ByteBuffer buf = ByteBuffer.allocate(MESSAGE_SIZE);
+		try {
+			
+				SctpMain.sm.setContent("\n Hello from Machine : "+Configfilereader.Machinename[(mynodeno - 1)] +"(Port : "
+						+ SERVER_PORT );
+			
+			// Before sending messages add additional information about the
+			// message
+			MessageInfo messageInfo = MessageInfo.createOutgoing(null, 0);
 
-		} catch (Exception e) {
+			buf.clear();
+
+			// convert the string message into bytes and put it in the byte
+			// buffer
+			buf.put(SctpMessage.serialize(SctpMain.sm));
+
+			// Reset a pointer to point to the start of buffer
+			buf.flip();
+
+			// Send a message in the channel (byte format)
+			sc.send(buf, messageInfo);
+			
+			// System.out.println("Server" + newmsg.getContent());
+
+			buf.clear();
+
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
-		return newmsg;
 	}
+	
 
 	public String byteToString(ByteBuffer byteBuffer) {
 		byteBuffer.position(0);
