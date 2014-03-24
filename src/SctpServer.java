@@ -38,8 +38,8 @@ public class SctpServer extends Thread {
 
 			// Bind the channel's socket to the server
 			ssc.bind(serverAddr);
-			System.out.println("Setting up the distributed network .....");
-			System.out.println("Server UP for node : " + mynodeno
+			System.out.println("Server : Setting up the distributed network .....");
+			System.out.println("Server : Server UP for node : " + mynodeno
 					+ " at Port number: " + SERVER_PORT);
 
 			// Server runs in loop for accepting connections from clients
@@ -57,7 +57,7 @@ public class SctpServer extends Thread {
 				Thread obj = new Thread(thread);		
 				obj.start();
 				
-				System.out.println("connection accepted from another node");
+				System.out.println("Server : connection accepted from another node");
 
 				// Break the loop once you have all the clients connected
 				if (sc.size() == (Configfilereader.totalnodes - 1))
@@ -67,7 +67,7 @@ public class SctpServer extends Thread {
 
 			// Allow some time to server to accept connections
 			System.out
-			.println("Node Setup Completed , Preparing network to send messages.....");
+			.println("Server : Node Setup Completed , Preparing network to send messages.....");
 		
 			
 			do

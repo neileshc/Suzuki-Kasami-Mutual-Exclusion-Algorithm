@@ -20,7 +20,7 @@ public class SctpApp implements Runnable{
 	
 	 public SctpApp()
 	{
-		System.out.println("\nApplication : Application is initiated");
+		System.out.println("Application : Application is initiated");
 		
 		SctpMain.LOG.logger.info("\tApplication : Application is initiated");
 		
@@ -55,7 +55,7 @@ public class SctpApp implements Runnable{
 				//Request critical section
 							
 				{
-					System.out.println("\nApplication : Requesting CS access");
+					System.out.println("Application : Requesting CS access");
 					SctpMain.LOG.logger.info("\tApplication : Requesting CS access");
 					
 				if(SctpMain.sme.cs_enter())
@@ -72,10 +72,10 @@ public class SctpApp implements Runnable{
 					
 					
 					//Execute CS
-					System.out.println("\nApplication : CS access secured");
+					System.out.println("Application : CS access secured");
 					SctpMain.LOG.logger.info("\tApplication : CS access secured");
 					
-					System.out.println("\nApplication : File Locked");
+					System.out.println("Application : File Locked");
 					SctpMain.LOG.logger.info("\tApplication : File Locked");
 					
 					
@@ -93,7 +93,7 @@ public class SctpApp implements Runnable{
 			         // this will verify if locking was failed due mutual exclusion violation
 			         if(lockattempt)
 			         {
-			        	 bufferedWriter.write("\nERROR : Lock attempt failed one or more time : "+ SctpServer.mynodeno);
+			        	 bufferedWriter.write("ERROR : Lock attempt failed one or more time : "+ SctpServer.mynodeno);
 			         }
 			         bufferedWriter.write("\nOpen file_by_node_: "+ SctpServer.mynodeno +" "+SctpVectorClock .get_my_seq_no(SctpServer.mynodeno));		
 			       
@@ -111,11 +111,11 @@ public class SctpApp implements Runnable{
 					//unlock file
 					lock.writeLock().unlock();
 					
-					System.out.println("\nApplication : File UnLocked");
+					System.out.println("Application : File UnLocked");
 					SctpMain.LOG.logger.info("\tApplication : File UnLocked");
 					
 					// Left CS
-					System.out.println("\nApplication : Leaving  CS");
+					System.out.println("Application : Leaving  CS");
 					
 					SctpMain.LOG.logger.info("\tApplication : Leaving  CS");
 					
@@ -139,7 +139,7 @@ public class SctpApp implements Runnable{
 			}
 				
 			
-		}while(count<10);
+		}while(count<2);
 		
 		
 	}

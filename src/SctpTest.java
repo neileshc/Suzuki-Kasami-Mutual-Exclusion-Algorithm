@@ -23,8 +23,8 @@ public class SctpTest {
 	
 	public static void safetyPropertyTest() throws IOException
 	{
-		System.out.println("\n Safety Property test: No 2 process in Critical section at the same time");
-		System.out.println("\n Initiating Safety Property test for the Mutual Exclusion algorithm");
+		System.out.println("Test : Safety Property test: No 2 process in Critical section at the same time");
+		System.out.println("Test : Initiating Safety Property test for the Mutual Exclusion algorithm");
 		
 		
 		String filename = "/home/004/n/nx/nxc121930/AOS/Project2/Log.log";
@@ -63,10 +63,10 @@ public class SctpTest {
 				
 				if(flagit==true)
 				{
-					System.out.println("\nTest FAILED");
-					System.out.println("\nProcess failure Details : ");
-					System.out.println("\nProcess : "+tokens[i][1]+"\t Sequence no : "+tokens[i][2]);
-					System.out.println("\nProcess : "+tokens[i+1][1]+"\t Sequence no : "+tokens[i+1][2]);
+					System.out.println("Test : Test FAILED");
+					System.out.println("Test : Process failure Details : ");
+					System.out.println("Test : Process : "+tokens[i][1]+"\t Sequence no : "+tokens[i][2]);
+					System.out.println("Test : Process : "+tokens[i+1][1]+"\t Sequence no : "+tokens[i+1][2]);
 					break;
 				}
 				i=i+2;

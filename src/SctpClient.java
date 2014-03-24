@@ -57,7 +57,7 @@ public class SctpClient extends Thread {
 				// Save this servers connection in list
 				sc.add(temp_sc);
 						
-				System.out.println("Client connected to Machine: " + machine
+				System.out.println("Client : Client connected to Machine: " + machine
 						+ " at Port number: " + SERVER_PORT);
 			}
 
@@ -97,8 +97,8 @@ public class SctpClient extends Thread {
 							if(SctpVectorClock.isSend_request())
 							{
 																
-								System.out.println("\nClient : Do i have Privalage:"+SctpToken.doihavetoken);
-								SctpMain.LOG.logger.info("\nClient : Do i have Privalage:"+SctpToken.doihavetoken);
+								System.out.println("Client : Do i have Privalage:"+SctpToken.doihavetoken);
+								SctpMain.LOG.logger.info("\tClient : Do i have Privalage:"+SctpToken.doihavetoken);
 								send_request();
 								
 								// Unset the request flag after sending message.
@@ -143,8 +143,8 @@ public class SctpClient extends Thread {
 					SendMsg(sc.get(j));
 					
 									}
-				System.out.println("\nClient : Reply sent to request");
-				SctpMain.LOG.logger.info("\nClient : Reply sent to request");
+				System.out.println("Client : Reply sent to request");
+				SctpMain.LOG.logger.info("\tClient : Reply sent to request");
 		}	
 	
 	
@@ -152,7 +152,7 @@ public class SctpClient extends Thread {
 	// Message of type request
 	public void send_request()
 	{
-		System.out.println("\nClient : Request Sent");
+		System.out.println("Client : Request Sent");
 		SctpMain.LOG.logger.info("\nClient : Request Sent");
 		// Increment the sequence no for new cs request
 		SctpMain.sv.incrementRequest_node();

@@ -28,7 +28,7 @@ public static boolean send_request;
 
 public SctpVectorClock()
 {
-	System.out.println("Initializing Request node and timestamp content to 0");
+	System.out.println("VectorClock : Initializing Request node content to 0");
 	for(int i=0;i<Configfilereader.totalnodes;i++)
 	{
 				Request_Node[i]=0;

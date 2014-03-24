@@ -33,10 +33,10 @@ public class SctpMain {
 			// determine if the message type is of request and take action accordingly
 			if(newmsg.isIs_msg_request())
 			{
-				System.out.println("\n New request for critical section received from node: "+ newmsg.getNode_no());
-				SctpMain.LOG.logger.info("\n New request for critical section received from node: "+ newmsg.getNode_no());
-				System.out.println("\n Sequence no: "+newmsg.getSeq_no());
-				SctpMain.LOG.logger.info("\n Sequence no: "+newmsg.getSeq_no());
+				System.out.println("Process Data : New request for critical section received from node: "+ newmsg.getNode_no());
+				SctpMain.LOG.logger.info("\tProcess Data :  New request for critical section received from node: "+ newmsg.getNode_no());
+				System.out.println("Process Data : Sequence no: "+newmsg.getSeq_no());
+				SctpMain.LOG.logger.info("\tProcess Data :  Sequence no: "+newmsg.getSeq_no());
 
 				//Update RN with the received request
 				SctpMain.sv.setRequest_Node(newmsg.getNode_no(), newmsg.getSeq_no());
@@ -59,27 +59,27 @@ public class SctpMain {
 			else if(newmsg.isIs_msg_reply())
 			{
 				
-				System.out.println("\n Process Data :Reply received");
-				SctpMain.LOG.logger.info("\n Process Data :Reply received");	
+				System.out.println("Process Data : Reply received");
+				SctpMain.LOG.logger.info("\tProcess Data :Reply received");	
 				// Lock token for executing CS
 				// Validate reply: sending token will be prevented until lock is removed
 				SctpToken.setLocktoken(true);
 							
-				System.out.println("\n Process Data : q content before update" +SctpToken.getTokenQ());
-				SctpMain.LOG.logger.info("\n Process Data : q content before update" +SctpToken.getTokenQ());
+				System.out.println("Process Data : q content before update" +SctpToken.getTokenQ());
+				SctpMain.LOG.logger.info("\tProcess Data : q content before update" +SctpToken.getTokenQ());
 				SctpToken.setTokenVector(newmsg.getTokenVector());
 				SctpToken.setTokenQ(newmsg.getTokenQueue());
-				System.out.println("\n Process Data : q content after update" +SctpToken.getTokenQ());
-				SctpMain.LOG.logger.info("\n Process Data : q content after update" +SctpToken.getTokenQ());
+				System.out.println("Process Data : q content after update" +SctpToken.getTokenQ());
+				SctpMain.LOG.logger.info("\tProcess Data : q content after update" +SctpToken.getTokenQ());
 				
 				// you have the token so update the flag
 				// ME: the condition will be true and thread will be unblocked
 				SctpToken.doihavetoken=true;
 							
-				System.out.println("\n Process Data :Token Lock status: "+SctpToken.isLocktoken());
-				SctpMain.LOG.logger.info("\n Process Data :Token Lock status: "+SctpToken.isLocktoken());
-				System.out.println("\n Process Data :Token status: "+SctpToken.doihavetoken);
-				SctpMain.LOG.logger.info("\n Process Data :Token status: "+SctpToken.doihavetoken);
+				System.out.println("Process Data :Token Lock status: "+SctpToken.isLocktoken());
+				SctpMain.LOG.logger.info("\tProcess Data :Token Lock status: "+SctpToken.isLocktoken());
+				System.out.println("Process Data :Token status: "+SctpToken.doihavetoken);
+				SctpMain.LOG.logger.info("\tProcess Data :Token status: "+SctpToken.doihavetoken);
 			}
 			
 						
@@ -94,39 +94,30 @@ public class SctpMain {
 		nodeno = Integer.parseInt(args[0]);
 		Configfilereader r = new Configfilereader();
 		r.readfile();
-
-
+	
 		
+		SctpServer s1 = new SctpServer(nodeno);
+		SctpClient c1 = new SctpClient(nodeno);
 		sm = new SctpMessage(nodeno);
 		sv = new SctpVectorClock();
 		sme=new SctpME();
 		svr=new SctpValidateReply();
-	
-		
-		
-		SctpServer s1 = new SctpServer(nodeno);
-		Thread t1 = new Thread(s1);
-		t1.start();
-		
+		SctpToken st=new SctpToken();
 		LOG=new SctpLogger();	
 		
+		Thread t1 = new Thread(s1);
+		t1.start();
+				
 		Thread.sleep(1000);
 		
-		//Token needs to access Sctp server var
-		SctpToken st=new SctpToken();
-		
-
 		System.out
-		.println("Press enter to start Stock Application...Make sure your all node servers are UP");
+		.println("Main : Press enter to start Application...Make sure your all node servers are UP");
 		br.readLine();
-		
-		SctpClient c1 = new SctpClient(nodeno);
+				
 		Thread t2 = new Thread(c1);
 		t2.start();
 
-		
-		
-		// start the application thread
+			// start the application thread
 		SctpApp sap = new SctpApp();
 		Thread t4 = new Thread(sap);
 		t4.start();
@@ -137,13 +128,10 @@ public class SctpMain {
 		t2.join();
 		
 		
-
-		
-		
-		for (int i = 0; i < Configfilereader.totalnodes; i++) {
-			System.out.print(sv.Request_Node[i] + "\t");
-			
-		}
+//		for (int i = 0; i < Configfilereader.totalnodes; i++) {
+//			System.out.print(sv.Request_Node[i] + "\t");
+//			
+//		}
 		
 
 	}

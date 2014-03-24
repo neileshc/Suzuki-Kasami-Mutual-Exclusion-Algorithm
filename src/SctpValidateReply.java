@@ -14,17 +14,17 @@ public class SctpValidateReply {
 	public static void ValidateReply() {
 		try {
 	
-				System.out.println("\nValidate Reply : Q content : " +SctpToken.getTokenQ());
-				SctpMain.LOG.logger.info("\nValidate Reply : Q content : " +SctpToken.getTokenQ());
+				System.out.println("Validate Reply : Q content : " +SctpToken.getTokenQ());
+				SctpMain.LOG.logger.info("\tValidate Reply : Q content : " +SctpToken.getTokenQ());
 				
 				sendtoken=(int) SctpToken.getTokenQ().poll();
 			
-				System.out.println("\nValidate Reply : Q content after polling : " +SctpToken.getTokenQ());
-				SctpMain.LOG.logger.info("\nValidate Reply : Q content after polling : " +SctpToken.getTokenQ());
-				System.out.println("\nValidate Reply : send token data updated");
-				SctpMain.LOG.logger.info("\nValidate Reply : send token data updated");
-				System.out.println("\nValidate Reply : Sending Token to node : "+sendtoken);
-				SctpMain.LOG.logger.info("\nValidate Reply : Sending Token to node : "+sendtoken);
+				System.out.println("Validate Reply : Q content after polling : " +SctpToken.getTokenQ());
+				SctpMain.LOG.logger.info("\tValidate Reply : Q content after polling : " +SctpToken.getTokenQ());
+				System.out.println("Validate Reply : send token data updated");
+				SctpMain.LOG.logger.info("\tValidate Reply : send token data updated");
+				System.out.println("Validate Reply : Sending Token to node : "+sendtoken);
+				SctpMain.LOG.logger.info("\tValidate Reply : Sending Token to node : "+sendtoken);
 				SctpToken.doihavetoken=false;
 								
 				
