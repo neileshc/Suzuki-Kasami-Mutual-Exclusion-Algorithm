@@ -6,7 +6,8 @@ import java.io.InputStreamReader;
 
 public class Configfilereader {
 	public static Integer totalnodes;
-	public static int numberofmessages = 5;
+	public static int numberofmessages = 0;
+	public static int inittokenholder= 0;
 	public static int[] Machineno = new int[100];
 	public static String[] Machinename = new String[100];
 	public static int[] Machineport = new int[100];
@@ -20,7 +21,9 @@ public class Configfilereader {
 		String line = fr.readLine();
 		String[] tokens = line.split(" ");
 		totalnodes = Integer.parseInt(tokens[0]);
-
+		numberofmessages =Integer.parseInt(tokens[1]);
+		inittokenholder =Integer.parseInt(tokens[2]);
+		
 		while (true) {
 			line = fr.readLine();
 			if (line == null)

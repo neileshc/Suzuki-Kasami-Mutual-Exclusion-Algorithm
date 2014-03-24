@@ -139,10 +139,31 @@ public class SctpApp implements Runnable{
 			}
 				
 			
-		}while(count<2);
+		}while(count<Configfilereader.numberofmessages);
 		
-		
+		// Termination Initiation
+		int i=0;
+		if(SctpToken.doihavetoken==true)
+		{
+			for(i=0;i<Configfilereader.totalnodes;i++)
+			{			
+				if(SctpVectorClock.Request_Node[i]==SctpToken.tokenVector[i])
+				{
+					continue;
+				}
+				else
+					break;
+			}
+				
+				if(i==Configfilereader.totalnodes)
+				{
+				System.out.println("Initiating termination as all of the requests are satisfied");
+				SctpMain.Oktoterminate=true;
+				
+				}
+			}
+		}
 	}
 	
 	
-}
+

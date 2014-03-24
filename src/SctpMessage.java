@@ -24,7 +24,7 @@ public class SctpMessage implements Serializable {
 	private int seq_no;
 	private int reply_nodeno;
 	private int queueTop;
-	
+	public boolean isterminationmsg;
 	
 	public SctpMessage(int nodeno) {
 		
@@ -41,6 +41,7 @@ public class SctpMessage implements Serializable {
 		is_msg_request=false;
 		is_msg_reply=false;
 		reply_nodeno=-1;
+		isterminationmsg=false;
 	}
 
 	

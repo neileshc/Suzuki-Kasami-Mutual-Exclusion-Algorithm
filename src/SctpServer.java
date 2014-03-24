@@ -74,8 +74,10 @@ public class SctpServer extends Thread {
 			{
 				//do thing
 				
-			}while(true);
+			}while(!Thread.currentThread().isInterrupted());
 			
+			
+			System.out.println("Server : Exiting ");
 			// handle it better way to avoid server shutting down if you can
 			
 			

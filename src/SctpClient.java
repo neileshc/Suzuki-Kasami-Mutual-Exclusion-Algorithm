@@ -106,12 +106,11 @@ public class SctpClient extends Thread {
 								
 								
 							}
+			
 							
-							
-							
-						}while(true);
+						}while(!Thread.currentThread().isInterrupted());
 						
-		
+						System.out.println("Client : Exiting ");
 		}
 
 		catch (IOException | InterruptedException e) {
@@ -130,6 +129,7 @@ public class SctpClient extends Thread {
 			SctpMain.sm.setIs_msg_request(false);
 			SctpMain.sm.setIs_msg_reply(true);
 			SctpMain.sm.setReply_nodeno(reply_nodeno);
+			SctpMain.sm.isterminationmsg=false;
 			
 			SctpMain.sm.setTokenQueue(SctpToken.getTokenQ());
 			SctpMain.sm.setTokenVector(SctpToken.getTokenVector());
@@ -167,6 +167,7 @@ public class SctpClient extends Thread {
 		SctpMain.sm.setIs_msg_request(true);
 		//SctpMain.sm.setIs_msg_contains_token(false);
 		SctpMain.sm.setIs_msg_reply(false);
+		SctpMain.sm.isterminationmsg=false;
 		
 		//Increment the Time stamp 
 		//SctpVectorClock.incrementTimeStamp(mynodeno);
@@ -183,6 +184,22 @@ public class SctpClient extends Thread {
 				
 			
 			
+	}
+	
+	public boolean send_terminatation()
+	{
+		SctpMain.sm.isterminationmsg=true;
+		SctpMain.sm.setIs_msg_request(false);
+		SctpMain.sm.setIs_msg_reply(false);
+		
+		// Broadcast message to every node in network
+					for (int j = 0; j < sc.size(); j++) {
+										
+						SendMsg(sc.get(j));
+						}
+		
+		
+		return true;
 	}
 	
 	

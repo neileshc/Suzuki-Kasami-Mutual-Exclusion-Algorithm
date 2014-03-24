@@ -16,6 +16,8 @@ public class SctpMain {
 	public static SctpValidateReply svr;
 	public static SctpApp sap;
 	public static SctpLogger LOG;
+	public static boolean Oktoterminate=false;
+	public static boolean terminationreceived=false;
 	
 	public static int nodeno;
 	public static BufferedReader br = new BufferedReader(new InputStreamReader(
@@ -81,6 +83,11 @@ public class SctpMain {
 				System.out.println("Process Data :Token status: "+SctpToken.doihavetoken);
 				SctpMain.LOG.logger.info("\tProcess Data :Token status: "+SctpToken.doihavetoken);
 			}
+			else if(newmsg.isterminationmsg)
+			{
+				terminationreceived=true;
+				Oktoterminate=true;
+			}
 			
 						
 		}
@@ -124,15 +131,46 @@ public class SctpMain {
 		
 		
 		
-		t1.join();
-		t2.join();
+		//t1.join();
+		//t2.join();
 		
+		while(Oktoterminate==false)
+		{
+			// do nothing
+			if(Oktoterminate==true)
+				break;
+			
+			System.out.print("");
+			
+		}
+		
+		System.out.println("Closing the connections");
+		
+	//	Thread.sleep(5000);
+			
+		if(terminationreceived==true)
+		{
+			
+			t2.interrupt();
+			t1.interrupt();
+		}
+		else if(c1.send_terminatation())
+		{
+		
+			t2.interrupt();
+			t1.interrupt();
+		}
+			
+		
+	//	Thread.sleep(5000);
 		
 //		for (int i = 0; i < Configfilereader.totalnodes; i++) {
-//			System.out.print(sv.Request_Node[i] + "\t");
+//			System.out.print(SctpVectorClock.Request_Node[i] + "\t");
 //			
 //		}
 		
-
 	}
+	
+	
+	
 }

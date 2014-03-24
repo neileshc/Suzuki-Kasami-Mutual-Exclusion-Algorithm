@@ -42,8 +42,8 @@ public class SctpToken {
 		//isempty_tokenqueue=true;
 		Locktoken=false;
 		
-		//start token with node no 1 initially
-		if(SctpServer.mynodeno==1)
+		//Assign the initial token to node no as per config files
+		if(SctpServer.mynodeno==Configfilereader.inittokenholder)
 			doihavetoken=true;
 		else
 			doihavetoken= false;
