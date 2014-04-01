@@ -20,8 +20,8 @@ public SctpChannelprocessing(SctpChannel sc) {
 		{
 			if(SctpMain.Oktoterminate)  
 			{
-				//System.out.println("hitting self initiated termination");
-			 break;	
+				break;
+				
 			}
 		
 			
@@ -60,9 +60,7 @@ public SctpChannelprocessing(SctpChannel sc) {
 	}
 
 	SctpMessage receiveMsg(SctpChannel sc) {
-		
-		
-		
+						
 		SctpMessage newmsg = null;
 		ByteBuffer buf = ByteBuffer.allocate(SctpClient.MESSAGE_SIZE);
 	

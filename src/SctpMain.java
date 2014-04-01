@@ -85,6 +85,7 @@ public class SctpMain {
 			}
 			else if(newmsg.isterminationmsg)
 			{
+				System.out.println("Process Data : Termination Received ");
 				terminationreceived=true;
 				Oktoterminate=true;
 			}
@@ -150,9 +151,11 @@ public class SctpMain {
 			
 		if(terminationreceived==true)
 		{
-			
+			if(c1.send_terminatation())
+			{
 			t2.interrupt();
 			t1.interrupt();
+			}
 		}
 		else if(c1.send_terminatation())
 		{
@@ -162,7 +165,7 @@ public class SctpMain {
 		}
 			
 		
-	//	Thread.sleep(5000);
+		Thread.sleep(5000);
 		
 //		for (int i = 0; i < Configfilereader.totalnodes; i++) {
 //			System.out.print(SctpVectorClock.Request_Node[i] + "\t");
