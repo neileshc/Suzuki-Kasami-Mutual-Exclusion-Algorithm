@@ -48,6 +48,12 @@ public class SctpToken {
 		else
 			doihavetoken= false;
 			
+		if(Configfilereader.isbug)
+		{
+			// give token to one more process so we have 2 tokens in the system now
+			if(SctpServer.mynodeno==((Configfilereader.inittokenholder+2)/Configfilereader.totalnodes))
+					doihavetoken=true;
+		}
 	}
 	
 	

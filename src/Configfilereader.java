@@ -7,12 +7,13 @@ import java.io.InputStreamReader;
 public class Configfilereader {
 	public static Integer totalnodes;
 	public static int numberofmessages = 0;
-	public static int inittokenholder= 0;
+	public static int inittokenholder = 0;
 	public static int[] Machineno = new int[100];
 	public static String[] Machinename = new String[100];
 	public static int[] Machineport = new int[100];
 	int i = -1;
-	public static int timeforinternalmsg=3;
+	public static boolean isbug = false;
+	public static int requestornodes = 0;
 
 	public void readfile() throws IOException {
 		File file = new File("Config.txt");
@@ -20,10 +21,20 @@ public class Configfilereader {
 				new FileInputStream(file), "ASCII"));
 		String line = fr.readLine();
 		String[] tokens = line.split(" ");
-		totalnodes = Integer.parseInt(tokens[0]);
-		numberofmessages =Integer.parseInt(tokens[1]);
-		inittokenholder =Integer.parseInt(tokens[2]);
 		
+		// Fetching the first line of config file
+		totalnodes = Integer.parseInt(tokens[0]);
+		numberofmessages = Integer.parseInt(tokens[1]);
+		inittokenholder = Integer.parseInt(tokens[2]);
+		requestornodes = Integer.parseInt(tokens[3]);
+
+		// Fetch rest of the details from config file
+		if (tokens[4].equals("bugit")) {
+			isbug = true;
+			System.out.println("ConfigfileReader : Bug introduced in the code");
+			SctpMain.LOG.logger.info("\tConfigfileReader : Bug introduced in the code");
+		}
+
 		while (true) {
 			line = fr.readLine();
 			if (line == null)
@@ -38,12 +49,5 @@ public class Configfilereader {
 
 	}
 
-	public void findmyserversocketport(Integer node) {
-
-	}
-
-	public void findmyclientsocketports(Integer node) {
-
-	}
 
 }
